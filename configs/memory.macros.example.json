@@ -1,0 +1,14 @@
+{
+  "macros": [
+    {
+      "instance": "u_sram",
+      "module": "sram_1024x32",
+      "depth": 1024,
+      "width": 32,
+      "ports": "1rw",
+      "liberty": "/pdk/example/memory/sram_1024x32.lib",
+      "lef": "/pdk/example/memory/sram_1024x32.lef",
+      "verilog_model": "/pdk/example/memory/sram_1024x32.v"
+    }
+  ]
+}
