@@ -72,3 +72,18 @@ The open-source flow is valuable for fast iterations; **DC/PT/PTPX reports are t
 ## Security and reproducibility
 
 Use SSH agent/key and previously verified host keys; never store passwords or license secrets in JSON. Do not upload proprietary PDK, Liberty/LEF, SRAM collaterals or private reports to this public repository. Runs should use isolated directories and retain configuration/source hashes, tool versions, reports and baseline/candidate identity. Do not allow a model to inject unreviewed shell/Tcl into a trusted EDA host.
+
+## Example-driven RTL style (Compiler_Codes)
+
+`rtl-coding-standard` includes five **newly written, non-proprietary** SystemVerilog templates (`compute_pe`, `fifo`, `buffer`, `controller`, `top`), an explicit filelist sample, counterexamples, an architecture-contract reference, and a conservative Python style checker with a smoke test. The conventions are derived from publicly inspectable ACTransformer-DS modules in [Compiler_Codes](https://github.com/DingdongD/Compiler_Codes); no proprietary module implementation is redistributed. Start with `skills/rtl-coding-standard/references/EXAMPLES.md`.
+
+```bash
+python skills/rtl-coding-standard/scripts/rtl_style_check.py --root /your/project --filelist rtl/filelist/compute.f
+python -m unittest discover -s skills/rtl-coding-standard/tests -v
+```
+
+The style checker currently covers module/filename naming, duplicate definitions in a selected filelist, parameters, forbidden `casex` and placement diagnostics. It is **not** a SystemVerilog parser, cannot infer correctness and cannot parse every nested/tool-specific filelist. Use project lint and elaboration after it.
+
+## Booley-inspired example references
+
+The Goal Loop, Simulation, Waveform Debug, PPA, DC, STA, Power and SRAM Skills now each link a scoped example in their `references/` directory. This mirrors the useful Booley pattern of short agent instructions + actionable, step-by-step references/templates. The original Booley Goal Mode and Project Setup offer substantially stronger tool-backed goal/target contracts than these lightweight standalone instructions; this collection does **not** claim feature parity.
