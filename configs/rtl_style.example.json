@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "profile": "compiler_codes_acds",
+  "rtl_root": "rtl",
+  "hdl_dir": "rtl/hdl",
+  "filelist_dir": "rtl/filelist",
+  "tb_dir": "rtl/tb",
+  "macro_dir": "rtl/macro",
+  "rules": {
+    "module_filename_match": "prefer",
+    "names": "snake_case",
+    "parameters": "UPPER_SNAKE_CASE",
+    "instances_prefix": "u_",
+    "reset_active_low": "rst_n",
+    "handshake_valid": "_vld",
+    "handshake_ready": "_rdy",
+    "preserve_legacy_interface": true,
+    "require_explicit_filelist": true,
+    "forbid_generated_artifacts_in_rtl": true
+  },
+  "lint": {
+    "verilator": true,
+    "verible_optional": true,
+    "legacy_violations": "report_without_bulk_rewrite"
+  }
+}
