@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "design": {
+    "name": "example_pe",
+    "top": "pe_top",
+    "rtl_files": [
+      "rtl/pe_top.sv"
+    ],
+    "constraints": "constraints/pe.sdc"
+  },
+  "technology": {
+    "libraries": [
+      "/pdk/example/lib/slow.lib"
+    ],
+    "corner": "ss",
+    "memory_manifest": null
+  },
+  "objectives": {
+    "clock_period_ns": 2,
+    "max_area_um2": null,
+    "max_dynamic_power_mw": null
+  },
+  "analysis": {
+    "dc": true,
+    "sta": true,
+    "power": false,
+    "coverage": false
+  },
+  "power": {
+    "activity_file": null,
+    "activity_format": "saif",
+    "strip_path": null
+  }
+}
