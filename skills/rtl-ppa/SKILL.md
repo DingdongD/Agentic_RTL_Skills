@@ -1,27 +1,24 @@
 ---
 name: rtl-ppa
-description: Evaluate RTL synthesis area, timing and resource tradeoffs, including apples-to-apples baseline comparison using Booley, Yosys, OpenROAD or configured FPGA flows.
+description: Analyze ASIC RTL area, timing and power with matched baseline/candidate constraints, using fast Yosys/OpenROAD or remote Synopsys DC, PrimeTime, PrimePower/PTPX and SRAM macro evidence.
 ---
 
-# RTL PPA Evaluation
+# Two-Tier RTL PPA
 
-## Baseline and controls
+Choose the analysis fidelity: fast Yosys/OpenROAD estimates for iteration, or configured Synopsys DC/PT/PTPX for technology-mapped area, STA and activity-informed power. Neither proves post-route signoff unless real physical implementation, extraction, corners and timing/power models are provided.
 
-1. Record the exact revision, top, hierarchy, parameters, sources, timing constraints, libraries/PDK, target frequency, synthesis flags and tool versions.
-2. Reproduce a baseline before optimizing; verify that the proposed revision remains functionally equivalent or deliberately changes the stated contract.
-3. Use the project's existing synthesis target. Optional configured Booley commands:
-```bash
-booley targets --for synth
-booley flow synth --target <DECLARED_SYNTH_TARGET>
-```
-4. Otherwise use the repository's Yosys/OpenROAD/Vivado build; don't synthesize an arbitrary reduced hierarchy and report it as full-chip area.
-5. Distinguish generic synthesis cell counts, technology-mapped area, placed area, critical-path delay, slack and power estimates. Do not call an unconstrained Yosys cell count a physical area measurement.
-6. Ensure timing constraints and physical corner assumptions are identical between baseline and candidate.
-7. Report both absolute and percentage changes with metric units, timing feasibility and tradeoffs.
+## Baseline contract
 
-## Acceptance
+Freeze RTL git revision, hierarchy, parameters, tool versions, library/PDK identity, process/voltage/temperature corners, clocks, SDC, SRAM macro views, input activity and run flags. Do not compare unaligned experiments.
 
-- PPA improvement must not bypass regression, reset/handshake correctness, or architecture constraints.
-- Account for buffers, pipelines, control, SRAM/macros and routing model limitations.
-- For power, specify whether switching activity, voltage, frequency and physical parasitics were actually modeled.
-- Report unavailable values as unknown; never make up area, timing or energy numbers.
+## Open-source backend
+
+Prefer the project's existing synthesis flow. When Booley is properly configured, inspect declared targets with `booley targets --for synth` and invoke `booley flow synth --target <ACTUAL_TARGET>`. Otherwise run the existing Yosys/OpenROAD scripts. Do not mistake generic cell count for mapped physical area.
+
+## Synopsys backend
+
+Follow [remote integration](references/REMOTE_SYNOPSYS.md). Use the separate `synopsys-dc`, `synopsys-pt-sta`, `synopsys-power`, `sram-macro-analysis` Skills. DC generates the mapped netlist and preliminary area; PrimeTime verifies setup/hold and constraint/analysis coverage; PrimePower/PTPX estimates leakage/dynamic power from the mapped netlist and workload activity. Simulation code/functional coverage requires VCS or another simulator, not PrimeTime.
+
+Stop on unresolved macro instances, unlinked designs, unconstrained timing, missing SDC or unqualified PVT libraries. Treat missing switching activity and absent SRAM macro models as explicit evidence gaps, not zero contributions.
+
+Report objective, absolute baseline/candidate measurements and units, deltas, run status, constraints/corner, activity provenance, macro/standard-cell partitioning, critical paths, timing violations, limitations and saved evidence paths. Never invent PPA measurements.
