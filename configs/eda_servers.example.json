@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "servers": {
+    "synopsys-primary": {
+      "host": "eda.example.edu",
+      "port": 22,
+      "user": "eda_user",
+      "ssh_config_host": null,
+      "identity_file": "~/.ssh/id_ed25519",
+      "remote_workspace": "/home/eda_user/agentic_runs",
+      "setup_script": "/opt/eda/setup.sh",
+      "tools": {
+        "dc": "dc_shell",
+        "pt": "pt_shell",
+        "power": "pt_shell",
+        "vcs": "vcs"
+      },
+      "memory_compiler": {
+        "enabled": false,
+        "adapter": "external",
+        "config_file": null
+      }
+    }
+  }
+}
