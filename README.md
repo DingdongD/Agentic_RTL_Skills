@@ -9,6 +9,7 @@ The workflow is inspired by [Booley](https://github.com/boldaxolotl/booley) (Apa
 | Skill | Capability |
 | --- | --- |
 | `rtl-development` | Implement RTL against an explicit hardware contract |
+| `rtl-coding-standard` | Compiler_Codes-compatible RTL naming, style and file management |
 | `rtl-simulation` | Icarus/Verilator or configured Booley simulation |
 | `rtl-waveform-debug` | VCD/FST cycle and handshake diagnosis |
 | `rtl-goal-loop` | Evidence-backed acceptance goals |
