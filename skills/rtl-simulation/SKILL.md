@@ -35,3 +35,7 @@ verilator --lint-only --timing -f rtl_files.f --top-module dut_top
 ```
 
 The examples are templates, not executed validation. If the top or testbench are different, edit them accordingly.
+
+## Worked example
+
+Read `references/EXAMPLE_REGRESSION.md` for a cycle-conscious registered-PE regression plan. For each project, derive expected edge semantics from the actual DUT rather than blindly copying the example.
