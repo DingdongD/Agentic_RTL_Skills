@@ -25,3 +25,7 @@ description: Implement or refactor Verilog/SystemVerilog hardware modules from e
 - Do not quietly replace structural PE/array instances with single-cycle behavioral loops when cycle-accurate architecture is required.
 
 See `rtl-simulation` and `rtl-review` for acceptance.
+
+## Required repository coding convention
+
+Before creating or modifying RTL, follow `rtl-coding-standard` and its Compiler_Codes naming/file-management references. Preserve existing ACTransformer-style names and update affected `filelist/*.f` manifests; avoid broad renaming without approval.
