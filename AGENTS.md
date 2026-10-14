@@ -1,11 +1,12 @@
 # Agentic RTL Skills repository
 
-This repository contains reusable Codex skills, not synthesized hardware.
+Reusable Codex Skills for RTL verification and PPA workflows.
 
-- Each skill lives at `skills/<name>/SKILL.md` with YAML frontmatter containing `name` and `description`.
-- Keep each skill self-contained and focused on one engineering activity.
-- Commands in skills are examples unless clearly identified as actual tested commands.
-- Separate functional, cycle, and PPA verification; never infer one from another.
-- Do not claim results without executing the corresponding EDA tool.
-- Never weaken a user's hardware specification or acceptance goal without consent.
-- Keep upstream Booley attribution in README and do not copy its implementation without checking licensing and notices.
+- Add a skill under `skills/<name>/SKILL.md` with frontmatter `name` and `description`; keep each self-contained.
+- Respect the documented flow distinctions: simulation/code coverage, STA analysis coverage, mapped synthesis area, activity-aware power.
+- Do not claim a tool ran unless command logs and evidence exist for the actual revision.
+- Do not silently weaken design contracts, timing/area targets, corner conditions or numerical equivalence.
+- Remote EDA execution is opt-in. Use strong SSH host-key verification and separate proprietary collateral from source control.
+- Never store real server secrets, foundry libraries, generated SRAM macros or licensed binaries in this public repository.
+- The Tcl templates are unqualified examples until tested against the target EDA version, licensed features and process libraries.
+- Preserve provenance to Booley for the conceptual workflow; do not imply these skills implement Booley's MCP runtime.
