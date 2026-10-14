@@ -42,3 +42,7 @@ goals:
 ```
 
 This is an instruction-level goal loop, **not** Booley's internal Goal Mode database or its freshness validator. A scripted production implementation must persist and verify these fields.
+
+## Worked goal ledger
+
+Read `references/EXAMPLE_GOALS.md` for a concrete ledger and evidence freshness examples. This Skill cannot automatically freeze seeds or verify stale evidence like the full Booley Goal Mode; implement real persistence and validation before claiming a goal engine.
