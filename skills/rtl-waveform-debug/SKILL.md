@@ -16,3 +16,7 @@ description: Investigate RTL failures by querying actual VCD/FST transitions, re
 If Booley's `bwave` is installed, inspect `bwave --help` and use its `wave`, `signal`, `find`, `sample`, or `distance` commands as supported by the installed version. Otherwise use an installed VCD/FST parser or viewer. Do not claim traces were inspected unless the actual artifact was opened.
 
 A useful diagnosis reports **observed waveform evidence**, expected behavior, root cause, minimal RTL/testbench repair and fresh regression results.
+
+## Worked example
+
+Read `references/HANDSHAKE_CASE.md` for a buffer request/valid timing investigation; account for nonblocking-assignment scheduling and macro access latency. The table is hypothetical, not measured waveform evidence.
