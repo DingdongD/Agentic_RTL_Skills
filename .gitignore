@@ -1,0 +1,16 @@
+# Site-private credentials, PDK and licensed EDA outputs
+configs/eda_servers.json
+configs/design.json
+configs/memory.macros.json
+private/
+runs/
+reports/
+*.saif
+*.fsdb
+*.vcd
+*.spef
+*.db
+*.lib
+*.lef
+__pycache__/
+.pytest_cache/
