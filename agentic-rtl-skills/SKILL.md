@@ -1,0 +1,46 @@
+---
+name: agentic-rtl-skills
+description: One-stop end-to-end RTL engineering workflow for Compiler_Codes-style coding, design and source manifests, lint, simulation, cycle validation, waveform debug, coverage, synthesis, STA, power, SRAM macro integration, evidence-backed optimization and review. Use for full RTL implementation, debug, verification and ASIC PPA tasks.
+---
+
+# Agentic RTL Skills — Single Entrypoint
+
+This is the **only discoverable Codex Skill**. The files under `workflows/` are internal procedures, not individually installed skills. Run end-to-end on one request; choose relevant steps based on project capability, without pretending unavailable EDA tools ran.
+
+## Mandatory execution contract
+
+1. **Discover** repository root, architecture, RTL/TB trees, explicit filelists, macro views, clock/reset, PDK constraints, simulator/EDA availability, baseline revision and user's acceptance criteria.
+2. **Contract** the implementation: modules/ports, signedness, numerical rounding, cycle latency, throughput, ready/valid, memory behavior and goals. Read `references/ARCHITECTURE_CONTRACT.md` for cycle-sensitive datapaths.
+3. **Style and organization**: read `workflows/rtl-coding-standard.md`, `references/COMPILER_CODES_CONVENTIONS.md`, `references/RTL_FILE_MANAGEMENT.md`, `references/EXAMPLES.md`. Select the closest original template in `templates/`. Preserve legacy naming; update `filelist/*.f`.
+4. **Implement** smallest well-scoped RTL changes following `workflows/rtl-development.md`; create/update directed tests and assertions.
+5. **Validate** source manifests and run the optional `scripts/rtl_style_check.py`, then lint and elaborate. Fix actual design failures instead of suppressing rules.
+6. **Simulate** using `workflows/rtl-simulation.md`: reset, stress, numerical reference model, backpressure, edge-case, latency and seeded regressions. Capture explicit oracle and evidence. For failures use `workflows/rtl-waveform-debug.md`.
+7. **Coverage**: distinguish functional/code coverage (VCS/Verilator etc.) from PrimeTime timing-analysis coverage. Unavailable coverage remains unknown, not pass.
+8. **PPA**: follow `workflows/rtl-ppa.md`. Prefer open-source quick checks; use `workflows/synopsys-dc.md`, `workflows/synopsys-pt-sta.md`, `workflows/synopsys-power.md` and `workflows/sram-macro-analysis.md` for authorized remote ASIC evaluation. Validate real library/SRAM corner, SDC, netlist, parasitics and SAIF assumptions. Remote templates are not a fully implemented dispatcher.
+9. **Optimize** according to `workflows/rtl-goal-loop.md`, treating previous evidence affected by code/constraints changes as stale. Rerun relevant checks after each repair.
+10. **Review** independently according to `workflows/rtl-review.md`; report source revision, tests and seeds, observed cycle count, area/timing/power with provenance, coverage, limits and unresolved goals.
+
+## Adaptive path
+
+- **New module / refactor:** style → contract → implement → lint → simulation → cycle scoreboarding → PPA (when available) → review.
+- **Bugfix:** reproduce → waveform/root cause → minimal repair → full relevant regression → review.
+- **PPA optimization:** freeze baseline → simulation → comparable synth/STA/power → bounded change → fresh functional/cycle/PPA evidence.
+- **Environment incomplete:** complete every locally runnable gate, explicitly mark non-executed gates `blocked` or `not_run`; never hallucinate signoff.
+
+## Paths and invocation
+
+Paths in internal documents historically referred to separate `skills/<name>/` folders. Under this aggregation, resolve all relative resources **from this Skill root**:
+- `workflows/<name>.md`
+- `references/<name>/...` for domain-specific examples, or `references/...` for coding conventions.
+- `templates/...`, `scripts/...`, `adapters/...`, `configs/...`, `tests/...`.
+
+Example:
+```bash
+python scripts/rtl_style_check.py --root /path/to/design --filelist rtl/filelist/top.f
+python -m unittest discover -s tests -p 'test_*.py' -v
+```
+These commands should be executed **from the Skill root**, or with explicit paths. The lexical checker cannot replace actual HDL lint/elaboration. Do not run remote scripts without user-authorized server configuration and verified host identity.
+
+## Tool safety and provenance
+
+No password or PDK content in public Git. Use strict host-key checking and licensed tools only on authorized environments. Standalone files here capture Booley-inspired flow design but do not implement its Goal Mode backend or hardened sandbox. At every gate distinguish PASS, FAIL, INCONCLUSIVE, BLOCKED and NOT_RUN. Completion claims must cite artifacts from the current revision.

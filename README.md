@@ -1,89 +1,49 @@
 # Agentic RTL Skills
 
-Codex Agent Skills for evidence-driven RTL development, verification and ASIC PPA evaluation.
+**One Codex Skill:** `agentic-rtl-skills`. This repository packages the complete workflow from RTL creation through validation, PPA and review behind **one entrypoint**, rather than exposing 11 independent skills.
 
-The workflow is inspired by [Booley](https://github.com/boldaxolotl/booley) (Apache-2.0), but this repository is an independent Skills/adapters collection, **not** a fork of Booley's IDE, MCP server or sandbox.
-
-## Available Skills
-
-| Skill | Capability |
-| --- | --- |
-| `rtl-development` | Implement RTL against an explicit hardware contract |
-| `rtl-coding-standard` | Compiler_Codes-compatible RTL naming, style and file management |
-| `rtl-simulation` | Icarus/Verilator or configured Booley simulation |
-| `rtl-waveform-debug` | VCD/FST cycle and handshake diagnosis |
-| `rtl-goal-loop` | Evidence-backed acceptance goals |
-| `rtl-review` | Functional, numerical, timing and evidence review |
-| `rtl-ppa` | Two-tier ASIC PPA: Yosys/OpenROAD quick checks and commercial EDA |
-| `synopsys-dc` | Synthesis, mapped area, constraints and netlist evidence |
-| `synopsys-pt-sta` | PrimeTime setup/hold, WNS/TNS and timing coverage |
-| `synopsys-power` | PrimePower/PTPX power and SAIF activity coverage |
-| `sram-macro-analysis` | SRAM compiler manifest, macro views and integration checks |
-
-## Install in Codex
+## Install
 
 ```bash
 git clone https://github.com/DingdongD/Agentic_RTL_Skills.git
 mkdir -p ~/.codex/skills
-cp -r Agentic_RTL_Skills/skills/* ~/.codex/skills/
+cp -r Agentic_RTL_Skills/agentic-rtl-skills ~/.codex/skills/
 ```
 
-## Remote ASIC evaluation architecture
-
-```text
-Codex goal + RTL contract
-        |
-  lint / simulation / coverage           (project toolchain)
-        |
-  PPA backend selection
-       /            \
-Yosys/OpenROAD     SSH -> licensed EDA host
-fast estimate             |
-                 DC synthesis + mapped netlist
-                           |
-                     PrimeTime STA
-                           |
-                PrimePower/PTPX + SAIF
-                           |
-                   normalized evidence
-                           |
-                Agent diagnosis + repair
-```
-
-The open-source flow is valuable for fast iterations; **DC/PT/PTPX reports are technology-dependent and do not become physical signoff merely by using commercial tools**. Functional/code coverage belongs to a simulator such as VCS; PrimeTime's timing analysis coverage is a different metric.
-
-### Configuration
-
-- `configs/eda_servers.example.json`: remote host/tool references; use a **private** `configs/eda_servers.json` for real host addresses.
-- `configs/design.example.json`: RTL top, file list, SDC, process corner, power/area goals.
-- `configs/memory.macros.example.json`: SRAM module instances and corner-matched views.
-- `templates/dc/run.tcl`, `templates/pt/run.tcl`, `templates/power/run.tcl`: starting Tcl templates requiring site-specific qualification.
-- `adapters/ssh_runner.py`: key-based, strict-host-key SSH transport primitives.
-- `adapters/memory_adapter.py`: macro manifest validation.
-- `adapters/report_parser.py`: conservative extraction of a few report metrics.
-- `skills/rtl-ppa/references/REMOTE_SYNOPSYS.md`: evidence and security requirements.
-
-### Status and limits
-
-**Implemented:** standalone Skill descriptions, sample JSON, SSH command transport primitives, Tcl template starting points and limited metric parsers.
-
-**Not yet implemented or verified:** automatic staging/launch of a complete DC->PT->Power pipeline, VCS coverage ingestion, vendor-specific SRAM compiler invocation, full PDK/library validation, full PT/PTPX report schemas, activity-coverage enforcement, real licensed EDA execution and physical-design extraction. These are engineering extension points, **not** capabilities of the current release. Do not report PPA numbers until the actual remote job runs and its artifacts are verified.
-
-## Security and reproducibility
-
-Use SSH agent/key and previously verified host keys; never store passwords or license secrets in JSON. Do not upload proprietary PDK, Liberty/LEF, SRAM collaterals or private reports to this public repository. Runs should use isolated directories and retain configuration/source hashes, tool versions, reports and baseline/candidate identity. Do not allow a model to inject unreviewed shell/Tcl into a trusted EDA host.
-
-## Example-driven RTL style (Compiler_Codes)
-
-`rtl-coding-standard` includes five **newly written, non-proprietary** SystemVerilog templates (`compute_pe`, `fifo`, `buffer`, `controller`, `top`), an explicit filelist sample, counterexamples, an architecture-contract reference, and a conservative Python style checker with a smoke test. The conventions are derived from publicly inspectable ACTransformer-DS modules in [Compiler_Codes](https://github.com/DingdongD/Compiler_Codes); no proprietary module implementation is redistributed. Start with `skills/rtl-coding-standard/references/EXAMPLES.md`.
+For existing installations, remove only the eleven **obsolete skill directories created by this repository** before copying (after confirming you have no personal changes in them):
 
 ```bash
-python skills/rtl-coding-standard/scripts/rtl_style_check.py --root /your/project --filelist rtl/filelist/compute.f
-python -m unittest discover -s skills/rtl-coding-standard/tests -v
+# Confirm contents before deletion; do NOT delete ~/.codex/skills itself.
+for name in rtl-development rtl-simulation rtl-waveform-debug rtl-ppa rtl-goal-loop rtl-review rtl-coding-standard synopsys-dc synopsys-pt-sta synopsys-power sram-macro-analysis; do
+  echo "$HOME/.codex/skills/$name"
+done
 ```
 
-The style checker currently covers module/filename naming, duplicate definitions in a selected filelist, parameters, forbidden `casex` and placement diagnostics. It is **not** a SystemVerilog parser, cannot infer correctness and cannot parse every nested/tool-specific filelist. Use project lint and elaboration after it.
+`agentic-rtl-skills/SKILL.md` is the sole discoverable entry. The former 11 skill instructions are now documentation under `agentic-rtl-skills/workflows/`, not 11 independently installed skills.
 
-## Booley-inspired example references
+## Layout
 
-The Goal Loop, Simulation, Waveform Debug, PPA, DC, STA, Power and SRAM Skills now each link a scoped example in their `references/` directory. This mirrors the useful Booley pattern of short agent instructions + actionable, step-by-step references/templates. The original Booley Goal Mode and Project Setup offer substantially stronger tool-backed goal/target contracts than these lightweight standalone instructions; this collection does **not** claim feature parity.
+```text
+agentic-rtl-skills/
+  SKILL.md                  # Single orchestrating entrypoint
+  workflows/                # 11 internal discipline playbooks
+  references/               # Worked examples and contracts
+  templates/                # Compiler_Codes-compatible RTL + DC/PT/Power starters
+  scripts/                  # Style checker and SSH preflight
+  adapters/                 # Remote transport, parsers and memory manifest
+  configs/                  # Example JSON only, not credentials
+  tests/                    # Python smoke checks
+```
+
+The workflow is inspired by [Booley](https://github.com/boldaxolotl/booley) (Apache-2.0) and aligns stylistically with [Compiler_Codes](https://github.com/DingdongD/Compiler_Codes). Templates are independently authored educational examples, not copied proprietary RTL. Synopsys Tcl remains version/PDK-specific and **no complete licensed remote EDA automation is yet validated**. A passing style checker is not equivalent to Verilator lint, simulation, full coverage or signoff PPA.
+
+## Validation
+
+From the aggregated Skill root:
+
+```bash
+python -m unittest discover -s tests -p 'test_*.py' -v
+python scripts/rtl_style_check.py --root /path/to/project --filelist rtl/filelist/top.f
+```
+
+These commands are examples until exercised on an actual RTL project. Keep credentials, memory compiler output, PDK/Liberty/LEF and private EDA reports outside the public repository.
