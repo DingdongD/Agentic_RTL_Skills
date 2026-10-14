@@ -72,7 +72,3 @@ The open-source flow is valuable for fast iterations; **DC/PT/PTPX reports are t
 ## Security and reproducibility
 
 Use SSH agent/key and previously verified host keys; never store passwords or license secrets in JSON. Do not upload proprietary PDK, Liberty/LEF, SRAM collaterals or private reports to this public repository. Runs should use isolated directories and retain configuration/source hashes, tool versions, reports and baseline/candidate identity. Do not allow a model to inject unreviewed shell/Tcl into a trusted EDA host.
-
-## Attribution
-
-Ideas adapted from [Booley](https://github.com/boldaxolotl/booley) (Apache-2.0, respective contributors). No source implementation has been copied. Original instructions and wrappers are maintained separately.
