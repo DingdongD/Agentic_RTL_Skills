@@ -18,3 +18,7 @@ Check:
 Return findings ordered by severity with exact file/line references where available, a small reproducer, expected versus actual behavior, and a proposed corrective test. State explicitly which claims have executable evidence and which are unverified. Do not declare a pass for checks not run.
 
 Final review decision: `accept`, `changes_required` or `insufficient_evidence`; separate engineering recommendations from measured failures.
+
+## Coding and file-management review
+
+Apply `rtl-coding-standard`: audit module/file naming, parameter and instance conventions, interface compatibility, source filelists, include paths, hierarchy, testbench isolation and accidental duplicate definitions. Report inherited legacy deviations separately from regressions introduced by the change.
