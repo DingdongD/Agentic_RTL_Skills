@@ -29,3 +29,7 @@ See `rtl-simulation` and `rtl-review` for acceptance.
 ## Required repository coding convention
 
 Before creating or modifying RTL, follow `rtl-coding-standard` and its Compiler_Codes naming/file-management references. Preserve existing ACTransformer-style names and update affected `filelist/*.f` manifests; avoid broad renaming without approval.
+
+## Template-based implementation
+
+Use `rtl-coding-standard/references/EXAMPLES.md` to select the closest compute PE, FIFO, buffer, controller or top example. Adapt the example to the actual interface and microarchitecture contract; the examples are educational, not reusable IP blocks. Require an updated explicit filelist and verify real module elaboration.
