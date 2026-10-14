@@ -22,3 +22,7 @@ Final review decision: `accept`, `changes_required` or `insufficient_evidence`; 
 ## Coding and file-management review
 
 Apply `rtl-coding-standard`: audit module/file naming, parameter and instance conventions, interface compatibility, source filelists, include paths, hierarchy, testbench isolation and accidental duplicate definitions. Report inherited legacy deviations separately from regressions introduced by the change.
+
+## Example-driven checks
+
+Review naming and file placement against `rtl-coding-standard/references/EXAMPLES.md` including its counterexamples. Review cycle-sensitive structures against `ARCHITECTURE_CONTRACT.md`. Check any automated style-check output but never treat it as a substitute for elaboration or functional verification.
