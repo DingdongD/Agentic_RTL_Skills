@@ -1,40 +1,77 @@
 # Agentic RTL Skills
 
-Reusable [Codex Agent Skills](https://developers.openai.com/codex/skills) for evidence-driven RTL engineering.
+Codex Agent Skills for evidence-driven RTL development, verification and ASIC PPA evaluation.
 
-Inspired by the [Booley](https://github.com/boldaxolotl/booley) agentic RTL workflow. These are **original, standalone workflow instructions**, not a copy of Booley's IDE, EDA backends, sandbox or MCP server.
+The workflow is inspired by [Booley](https://github.com/boldaxolotl/booley) (Apache-2.0), but this repository is an independent Skills/adapters collection, **not** a fork of Booley's IDE, MCP server or sandbox.
 
-## Skills
+## Available Skills
 
-| Skill | Purpose |
+| Skill | Capability |
 | --- | --- |
-| `rtl-development` | Implement RTL from a timing/interface contract |
-| `rtl-simulation` | Run reproducible functional and cycle-level simulation |
-| `rtl-waveform-debug` | Trace signal-level failures using VCD/FST |
-| `rtl-ppa` | Compare RTL area and timing under controlled synthesis conditions |
-| `rtl-goal-loop` | Iterate against immutable, evidence-backed acceptance goals |
-| `rtl-review` | Independently review correctness, verification and PPA evidence |
+| `rtl-development` | Implement RTL against an explicit hardware contract |
+| `rtl-simulation` | Icarus/Verilator or configured Booley simulation |
+| `rtl-waveform-debug` | VCD/FST cycle and handshake diagnosis |
+| `rtl-goal-loop` | Evidence-backed acceptance goals |
+| `rtl-review` | Functional, numerical, timing and evidence review |
+| `rtl-ppa` | Two-tier ASIC PPA: Yosys/OpenROAD quick checks and commercial EDA |
+| `synopsys-dc` | Synthesis, mapped area, constraints and netlist evidence |
+| `synopsys-pt-sta` | PrimeTime setup/hold, WNS/TNS and timing coverage |
+| `synopsys-power` | PrimePower/PTPX power and SAIF activity coverage |
+| `sram-macro-analysis` | SRAM compiler manifest, macro views and integration checks |
 
-Each directory contains a `SKILL.md` with Codex-compatible YAML frontmatter. Install by copying selected skill directories into `$CODEX_HOME/skills/` (normally `~/.codex/skills/`), or place them in your project's `.agents/skills/` if your Codex environment supports repository-local skills.
+## Install in Codex
 
-## Engineering contract
+```bash
+git clone https://github.com/DingdongD/Agentic_RTL_Skills.git
+mkdir -p ~/.codex/skills
+cp -r Agentic_RTL_Skills/skills/* ~/.codex/skills/
+```
 
-1. Capture interface and observable timing behavior **before modifying RTL**.
-2. Identify top module, parameters, clock/reset, simulators and expected tests.
-3. Keep baseline and candidate configurations identical except for the intentional change.
-4. Never equate a successful tool exit with proven functional correctness without a test oracle.
-5. Treat failure, timeout, missing tooling and inconclusive evidence differently.
-6. Store command, tool versions, source revision, parameters, seed, logs and measured values.
-7. Re-run relevant checks after each material code change; old evidence is stale.
-8. Never invent synthesis measurements or claim cycle accuracy from non-cycle-accurate models.
-9. Prefer worktrees or isolated branches; never force-push, delete evidence or bypass safeguards without explicit authorization.
+## Remote ASIC evaluation architecture
 
-## Optional tooling
+```text
+Codex goal + RTL contract
+        |
+  lint / simulation / coverage           (project toolchain)
+        |
+  PPA backend selection
+       /            \
+Yosys/OpenROAD     SSH -> licensed EDA host
+fast estimate             |
+                 DC synthesis + mapped netlist
+                           |
+                     PrimeTime STA
+                           |
+                PrimePower/PTPX + SAIF
+                           |
+                   normalized evidence
+                           |
+                Agent diagnosis + repair
+```
 
-This collection uses an **adapter model**: existing `booley flow sim/lint/synth` targets are preferred when properly configured; otherwise use the project's established Verilator/Icarus/Yosys/OpenROAD commands. The skills do not install or bundle these tools. Optional Booley integration requires a separately configured Booley environment; see upstream [setup](https://github.com/boldaxolotl/booley/blob/main/docs/user/SETUP.md) and [flow reference](https://github.com/boldaxolotl/booley/blob/main/docs/user/FLOW_REFERENCE.md).
+The open-source flow is valuable for fast iterations; **DC/PT/PTPX reports are technology-dependent and do not become physical signoff merely by using commercial tools**. Functional/code coverage belongs to a simulator such as VCS; PrimeTime's timing analysis coverage is a different metric.
 
-## Provenance and license
+### Configuration
 
-Conceptual inspiration: Booley, copyright its respective contributors, Apache-2.0. Source: https://github.com/boldaxolotl/booley . No upstream source code is included in this extraction. The upstream license and attribution are linked rather than claiming this repository redistributes Booley itself.
+- `configs/eda_servers.example.json`: remote host/tool references; use a **private** `configs/eda_servers.json` for real host addresses.
+- `configs/design.example.json`: RTL top, file list, SDC, process corner, power/area goals.
+- `configs/memory.macros.example.json`: SRAM module instances and corner-matched views.
+- `templates/dc/run.tcl`, `templates/pt/run.tcl`, `templates/power/run.tcl`: starting Tcl templates requiring site-specific qualification.
+- `adapters/ssh_runner.py`: key-based, strict-host-key SSH transport primitives.
+- `adapters/memory_adapter.py`: macro manifest validation.
+- `adapters/report_parser.py`: conservative extraction of a few report metrics.
+- `skills/rtl-ppa/references/REMOTE_SYNOPSYS.md`: evidence and security requirements.
 
-This first release includes instruction-only skills. It makes **no claim of automated EDA validation** until run against an actual RTL project.
+### Status and limits
+
+**Implemented:** standalone Skill descriptions, sample JSON, SSH command transport primitives, Tcl template starting points and limited metric parsers.
+
+**Not yet implemented or verified:** automatic staging/launch of a complete DC->PT->Power pipeline, VCS coverage ingestion, vendor-specific SRAM compiler invocation, full PDK/library validation, full PT/PTPX report schemas, activity-coverage enforcement, real licensed EDA execution and physical-design extraction. These are engineering extension points, **not** capabilities of the current release. Do not report PPA numbers until the actual remote job runs and its artifacts are verified.
+
+## Security and reproducibility
+
+Use SSH agent/key and previously verified host keys; never store passwords or license secrets in JSON. Do not upload proprietary PDK, Liberty/LEF, SRAM collaterals or private reports to this public repository. Runs should use isolated directories and retain configuration/source hashes, tool versions, reports and baseline/candidate identity. Do not allow a model to inject unreviewed shell/Tcl into a trusted EDA host.
+
+## Attribution
+
+Ideas adapted from [Booley](https://github.com/boldaxolotl/booley) (Apache-2.0, respective contributors). No source implementation has been copied. Original instructions and wrappers are maintained separately.
