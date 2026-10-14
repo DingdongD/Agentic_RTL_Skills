@@ -22,3 +22,7 @@ Follow [remote integration](references/REMOTE_SYNOPSYS.md). Use the separate `sy
 Stop on unresolved macro instances, unlinked designs, unconstrained timing, missing SDC or unqualified PVT libraries. Treat missing switching activity and absent SRAM macro models as explicit evidence gaps, not zero contributions.
 
 Report objective, absolute baseline/candidate measurements and units, deltas, run status, constraints/corner, activity provenance, macro/standard-cell partitioning, critical paths, timing violations, limitations and saved evidence paths. Never invent PPA measurements.
+
+## Worked comparison
+
+Use `references/EXAMPLE_COMPARISON.md` to check baseline/candidate comparability and distinguish null data from passed constraints.
