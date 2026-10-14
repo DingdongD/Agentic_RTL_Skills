@@ -10,3 +10,5 @@ Reusable Codex Skills for RTL verification and PPA workflows.
 - Never store real server secrets, foundry libraries, generated SRAM macros or licensed binaries in this public repository.
 - The Tcl templates are unqualified examples until tested against the target EDA version, licensed features and process libraries.
 - Preserve provenance to Booley for the conceptual workflow; do not imply these skills implement Booley's MCP runtime.
+
+- All generated/modified RTL should follow `skills/rtl-coding-standard/SKILL.md` and its Compiler_Codes reference conventions, including `rtl/hdl` organization, explicit `rtl/filelist` management and compatible module/port naming. Do not bulk-rename legacy RTL.
