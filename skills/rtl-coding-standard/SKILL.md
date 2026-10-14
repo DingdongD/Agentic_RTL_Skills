@@ -40,3 +40,14 @@ Use [the directory guide](references/RTL_FILE_MANAGEMENT.md). Avoid globs as aut
 
 ## Acceptance
 A style pass requires correct names/location/manifest plus actual lint/elaboration when available. A functional pass requires tests. A PPA pass requires tool evidence. Preserve all three verdicts independently.
+
+## Mandatory examples and gates
+
+Before authoring new code, read `references/EXAMPLES.md`, choose the closest original template in `templates/`, and inspect the corresponding real Compiler_Codes *convention* documented in `references/COMPILER_CODES_CONVENTIONS.md`. Use `references/ARCHITECTURE_CONTRACT.md` for cycle-critical PE/buffer/controller designs. Do not copy proprietary original RTL text or copyright headers into this repository.
+
+For a changed project's source manifest, run (from this Skill directory or adjust the path):
+```bash
+python scripts/rtl_style_check.py --root /path/to/project --filelist rtl/filelist/compute.f
+python -m unittest discover -s tests -v
+```
+The checker is deliberately conservative and supports a subset of common filelist syntax; nested lists require flattening or parser extension. A passing style check is not Verilator lint, functional verification, or physical validation. Add actual simulator/linter checks before accepting the implementation.
