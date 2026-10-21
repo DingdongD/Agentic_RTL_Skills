@@ -21,6 +21,6 @@ jobs:
       - name: Validate modules and standard-library unit tests
         working-directory: agentic-rtl-skills
         run: |
-          python -m compileall -q engine verification backends adapters tests
+          python -m compileall -q engine verification backends adapters generation dse tests
           python -m unittest discover -s tests -p 'test_*.py' -v
-          python tests/rtl_simulation_smoke.py
+          PYTHONPATH=. python tests/rtl_simulation_smoke.py
