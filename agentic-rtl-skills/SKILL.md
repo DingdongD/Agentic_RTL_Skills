@@ -7,6 +7,27 @@ description: One-stop end-to-end RTL engineering workflow for Compiler_Codes-sty
 
 This is the **only discoverable Codex Skill**. The files under `workflows/` are internal procedures, not individually installed skills. Run end-to-end on one request; choose relevant steps based on project capability, without pretending unavailable EDA tools ran.
 
+## Mandatory non-destructive integration gate
+
+For an existing SoC, compiler, NPU or mixed RTL/CModel project, first read
+`workflows/compiler-codes-preservation.md`. The default target mode is
+**read_only**. Mutations require an explicitly authorized candidate worktree,
+frozen baseline SHA, inventory-derived path allowlist, and repository guard
+PASS. The guard is deterministic but does not establish interface, numerical,
+cycle, formal, or EDA correctness. Preserve the original test oracles and
+reject silent directory restructuring, ISA changes, and test weakening.
+
+Consult `contracts/schemas/architecture.schema.json` when forming an
+architecture-level contract. The JSON schema is an input structure, not
+proof of the design's functional or temporal semantics. For a mixed-domain
+RTL design choose between cycle_exact, transaction_equivalent and
+partial_order comparison explicitly; do not force asynchronous clock-domain
+traces into a single-cycle oracle.
+
+Do not modify the original source tree or merge a candidate automatically.
+No PPA optimization is accepted without matching original functional
+regressions, impacted compiler/CModel/RTL checks, and comparable tool evidence.
+
 ## Mandatory execution contract
 
 1. **Discover** repository root, architecture, RTL/TB trees, explicit filelists, macro views, clock/reset, PDK constraints, simulator/EDA availability, baseline revision and user's acceptance criteria.
