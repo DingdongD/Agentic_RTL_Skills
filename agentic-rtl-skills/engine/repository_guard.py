@@ -35,6 +35,12 @@ def evaluate(root, policy, base_ref, mode="read_only"):
     git_root = Path(_git(root, "rev-parse", "--show-toplevel").strip()).resolve()
     if root != git_root:
         raise GuardError("root must be the Git worktree root")
+    worktrees = _git(root, "worktree", "list", "--porcelain")
+    blocks = worktrees.strip().split("\n\n")
+    roots = [Path(line[9:]).resolve() for block in blocks
+             for line in block.splitlines() if line.startswith("worktree ")]
+    if policy.get("require_separate_worktree", True) and (len(roots) < 2 or root == roots[0]):
+        raise GuardError("candidate must be a separate Git worktree, not primary worktree")
     branch = _git(root, "symbolic-ref", "--quiet", "--short", "HEAD").strip()
     if branch in policy.get("protected_branches", ["main", "master"]):
         raise GuardError("refusing to evaluate mutations on a protected branch")
@@ -62,6 +68,8 @@ def evaluate(root, policy, base_ref, mode="read_only"):
     allowed = policy.get("allowed_paths", [])
     protected = policy.get("protected_paths", [])
     violations = []
+    if mode == "cross_layer" and not policy.get("cross_layer_authorized", False):
+        violations.append("cross_layer mode requires explicit authorization")
     if mode == "read_only" and changes:
         violations.append("read_only mode requires no changed files")
     for c in changes:
