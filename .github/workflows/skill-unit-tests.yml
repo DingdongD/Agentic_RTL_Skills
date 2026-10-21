@@ -16,8 +16,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Install Icarus Verilog
+        run: sudo apt-get update -qq && sudo apt-get install -y iverilog
       - name: Validate modules and standard-library unit tests
         working-directory: agentic-rtl-skills
         run: |
           python -m compileall -q engine verification backends adapters tests
           python -m unittest discover -s tests -p 'test_*.py' -v
+          python tests/rtl_simulation_smoke.py
