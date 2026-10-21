@@ -18,5 +18,7 @@
     "**/ISA/**",
     "**/*isa*.md"
   ],
-  "allow_deletions": false
+  "allow_deletions": false,
+  "require_separate_worktree": true,
+  "cross_layer_authorized": false
 }
