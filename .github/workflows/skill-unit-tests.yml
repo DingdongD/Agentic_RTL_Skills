@@ -1,0 +1,23 @@
+name: Skill unit tests
+on:
+  push:
+    branches: [feature/soc-rtl-contract-guardrails]
+  pull_request:
+    paths:
+      - 'agentic-rtl-skills/**'
+      - '.github/workflows/skill-unit-tests.yml'
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate modules and standard-library unit tests
+        working-directory: agentic-rtl-skills
+        run: |
+          python -m compileall -q engine verification backends adapters tests
+          python -m unittest discover -s tests -p 'test_*.py' -v
