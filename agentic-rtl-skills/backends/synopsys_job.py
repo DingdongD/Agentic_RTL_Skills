@@ -42,7 +42,7 @@ def launch(server, manifest, results_dir, approved=False):
     root = remote_path(server["remote_workspace"])
     base = root + "/" + job
     local = Path(results_dir).resolve() / job
-    local.mkdir(parents=True, exist_ok=False)
+    if local.exists():\n        raise JobError("local job ID already exists; choose a new immutable job ID")\n    local.mkdir(parents=True, exist_ok=False)
     artifact_paths = manifest["inputs"]
     if not artifact_paths or not all(Path(x).is_file() for x in artifact_paths):
         raise JobError("all manifest inputs must exist")
