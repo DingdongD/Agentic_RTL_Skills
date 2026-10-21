@@ -50,6 +50,18 @@ limited deterministic example and cannot generate arbitrary SoCs.
 Consult `verification.ppa_gate` for preliminary metric evidence checks;
 it is not equivalent to complete ASIC signoff or post-route analysis.
 
+## Real Compiler_Codes and physical evidence integration
+
+Before claiming Compiler_Codes validation, follow
+`workflows/compiler-codes-live-regression.md`. The public CI upstream checkout
+requires `COMPILER_CODES_READ_TOKEN` with repository read permissions; without
+it the upstream test reports BLOCKED, not PASS. Portable Python ACTSim unit
+tests do not prove CModel-to-Verilog equivalence. Run independent cycle/RTL
+tests and maintain matched operand, instruction, RTL and oracle revisions.
+Compare ASIC physical measurements using
+`verification.physical_gate` with identical library, corner, SDC and
+implementation stage. Do not equate placement reports with signoff.
+
 ## Mandatory execution contract
 
 1. **Discover** repository root, architecture, RTL/TB trees, explicit filelists, macro views, clock/reset, PDK constraints, simulator/EDA availability, baseline revision and user's acceptance criteria.
