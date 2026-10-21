@@ -23,7 +23,8 @@ def safe_name(name):
 
 
 def remote_path(value):
-    if not value.startswith("/") or any(c in value for c in "\n\r\0"):
+    if not value.startswith("/") or any(c in value for c in "
+\r\0"):
         raise JobError("absolute remote workspace required")
     if ".." in Path(value).parts:
         raise JobError("parent traversal in remote path")
@@ -42,7 +43,9 @@ def launch(server, manifest, results_dir, approved=False):
     root = remote_path(server["remote_workspace"])
     base = root + "/" + job
     local = Path(results_dir).resolve() / job
-    if local.exists():\n        raise JobError("local job ID already exists; choose a new immutable job ID")\n    local.mkdir(parents=True, exist_ok=False)
+    if local.exists():
+        raise JobError("local job ID already exists; choose a new immutable job ID")
+    local.mkdir(parents=True, exist_ok=False)
     artifact_paths = manifest["inputs"]
     if not artifact_paths or not all(Path(x).is_file() for x in artifact_paths):
         raise JobError("all manifest inputs must exist")
@@ -68,7 +71,8 @@ def launch(server, manifest, results_dir, approved=False):
     # environment entries; never upload PDK or licenses automatically.
     env = manifest.get("environment", {})
     for key, val in env.items():
-        if not re.fullmatch(r"[A-Z_][A-Z0-9_]*", key) or not isinstance(val, str) or "\n" in val:
+        if not re.fullmatch(r"[A-Z_][A-Z0-9_]*", key) or not isinstance(val, str) or "
+" in val:
             raise JobError("unsafe environment entry")
     create = ssh(server, remote_shell_script([
         "umask 077", "mkdir -p " + shlex.quote(base),
