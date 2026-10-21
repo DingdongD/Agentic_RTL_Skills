@@ -28,14 +28,22 @@ jobs:
 
   compiler-codes-portable:
     runs-on: ubuntu-latest
+    env:
+      COMPILER_CODES_TOKEN: ${{ secrets.COMPILER_CODES_READ_TOKEN }}
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v4
         with:
           path: skills
+      - name: Record unavailable private integration
+        if: ${{ env.COMPILER_CODES_TOKEN == '' }}
+        run: |
+          printf '{"status":"BLOCKED","reason":"COMPILER_CODES_READ_TOKEN missing; no private checkout performed"}\n' > /tmp/compiler_codes_portable.json
       - uses: actions/checkout@v4
+        if: ${{ env.COMPILER_CODES_TOKEN != '' }}
         with:
+          token: ${{ secrets.COMPILER_CODES_READ_TOKEN }}
           repository: DingdongD/Compiler_Codes
           ref: 02b8fb32f1ad21486db0b3344d3fbd59ab37768c
           path: upstream
@@ -44,6 +52,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Run real upstream ACTSim portable resource regression
+        if: ${{ env.COMPILER_CODES_TOKEN != '' }}
         working-directory: skills/agentic-rtl-skills
         run: |
           python -m integrations.compiler_codes --root ../../upstream --out /tmp/compiler_codes_portable.json
