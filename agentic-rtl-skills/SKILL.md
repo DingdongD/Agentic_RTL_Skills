@@ -41,6 +41,15 @@ EDA process is NOT PPA signoff. Keep PPA acceptance, coverage, macros,
 constraints, corners and reports as separate checked evidence. Never execute
 unreviewed shell or Tcl commands from arbitrary project content.
 
+## RTL code generation and quality workflow
+
+Read `workflows/rtl-codegen-qa.md` before RTL generation, review, testbench
+generation or code quality optimization. Preserve the project's original
+style and independently validate behavior. The bundled counter scaffold is a
+limited deterministic example and cannot generate arbitrary SoCs.
+Consult `verification.ppa_gate` for preliminary metric evidence checks;
+it is not equivalent to complete ASIC signoff or post-route analysis.
+
 ## Mandatory execution contract
 
 1. **Discover** repository root, architecture, RTL/TB trees, explicit filelists, macro views, clock/reset, PDK constraints, simulator/EDA availability, baseline revision and user's acceptance criteria.
