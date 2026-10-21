@@ -24,3 +24,31 @@ jobs:
           python -m compileall -q engine verification backends adapters generation dse tests
           python -m unittest discover -s tests -p 'test_*.py' -v
           PYTHONPATH=. python tests/rtl_simulation_smoke.py
+
+  compiler-codes-portable:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: skills
+      - uses: actions/checkout@v4
+        with:
+          repository: DingdongD/Compiler_Codes
+          ref: 02b8fb32f1ad21486db0b3344d3fbd59ab37768c
+          path: upstream
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run real upstream ACTSim portable resource regression
+        working-directory: skills/agentic-rtl-skills
+        run: |
+          python -m integrations.compiler_codes --root ../../upstream --out /tmp/compiler_codes_portable.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: compiler-codes-portable-report
+          path: /tmp/compiler_codes_portable.json
+          if-no-files-found: warn
