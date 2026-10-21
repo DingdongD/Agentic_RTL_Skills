@@ -23,8 +23,7 @@ def safe_name(name):
 
 
 def remote_path(value):
-    if not value.startswith("/") or any(c in value for c in "
-\r\0"):
+    if not value.startswith("/") or any(c in value for c in "\n\r\0"):
         raise JobError("absolute remote workspace required")
     if ".." in Path(value).parts:
         raise JobError("parent traversal in remote path")
@@ -71,8 +70,7 @@ def launch(server, manifest, results_dir, approved=False):
     # environment entries; never upload PDK or licenses automatically.
     env = manifest.get("environment", {})
     for key, val in env.items():
-        if not re.fullmatch(r"[A-Z_][A-Z0-9_]*", key) or not isinstance(val, str) or "
-" in val:
+        if not re.fullmatch(r"[A-Z_][A-Z0-9_]*", key) or not isinstance(val, str) or "\n" in val:
             raise JobError("unsafe environment entry")
     create = ssh(server, remote_shell_script([
         "umask 077", "mkdir -p " + shlex.quote(base),
