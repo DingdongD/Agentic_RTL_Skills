@@ -103,3 +103,18 @@ A machine-readable starting point for architecture/RTL contracts is provided
 at `contracts/schemas/architecture.schema.json`. Schema validation is not
 functional proof; existing regressions, compiler-to-CModel-to-RTL checks,
 cycle/protocol checks and comparable PPA evidence remain necessary.
+
+## Compiler_Codes integration and complex cycle regression
+
+A real Icarus Verilog ready/valid FIFO random-handshake test now complements
+the generated counter regression. Pinned Compiler_Codes ACTSim portable Python
+tests are configured in GitHub Actions, but that repository is inaccessible to
+the default public runner: add a GitHub Actions secret
+`COMPILER_CODES_READ_TOKEN` with read access to enable the checkout.
+Without the secret, the report records **BLOCKED**, not PASS.
+See `workflows/compiler-codes-live-regression.md`.
+
+`verification.physical_gate` performs comparison of reports with matching
+PVT/library/SDC/physical stages. No authorized DC/PT/PTPX execution or
+place-and-route is claimed by the repository. Full numerical CModel ↔ actual
+RTL and SoC-wide DSE require additional real evidence.
