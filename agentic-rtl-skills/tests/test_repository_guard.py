@@ -29,7 +29,7 @@ class RepositoryGuardTests(unittest.TestCase):
         self.base = git(self.root, "rev-parse", "HEAD")
         git(self.root, "checkout", "-b", "agent/candidate")
         self.policy = {"allowed_paths": ["rtl/**"], "protected_paths": ["compiler/**"],
-                       "allow_deletions": False}
+                       "allow_deletions": False, "require_separate_worktree": False}
 
     def test_valid_patch(self):
         (self.root / "rtl" / "pe.sv").write_text("module pe(input clk); endmodule\n")
