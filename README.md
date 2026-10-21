@@ -48,6 +48,30 @@ python scripts/rtl_style_check.py --root /path/to/project --filelist rtl/filelis
 
 These commands are examples until exercised on an actual RTL project. Keep credentials, memory compiler output, PDK/Liberty/LEF and private EDA reports outside the public repository.
 
+## SoC–RTL executable platform (incremental)
+
+The sole `agentic-rtl-skills` entrypoint now also invokes three deterministic
+modules documented in
+[`workflows/soc-rtl-platform.md`](agentic-rtl-skills/workflows/soc-rtl-platform.md):
+
+- `engine.flow_engine`: resumable dependency DAG with content fingerprints,
+  explicit outputs, JSON states, and invalidation.
+- `verification.cycle_scoreboard`: reference-vs-RTL JSONL traces with
+  cycle-exact, transaction-equivalent and domain-local order modes.
+- `backends.synopsys_job`: explicit-approval remote EDA script staging,
+  SSH execution, captured log and exit status.
+
+These are first usable execution primitives, **not** a completed SoC DSE
+platform, automated CModel generator, or signed-off Synopsys flow.
+They require an operator-reviewed plan, project-specific contracts,
+EDA configuration and independent regression evidence.
+
+Run local standard-library tests from the Skill root:
+
+```bash
+python -m unittest discover -s tests -p 'test_*.py' -v
+```
+
 ## SoC/Compiler_Codes safe optimization (candidate branch)
 
 A new **non-destructive** external-repository path is available in
