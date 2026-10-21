@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "description": "Example fail-closed policy: adjust allowlist after read-only discovery, never before.",
+  "protected_branches": [
+    "main",
+    "master"
+  ],
+  "allowed_paths": [
+    "rtl/**",
+    "hw/**",
+    "hardware/**",
+    "sim/**",
+    "tests/**"
+  ],
+  "protected_paths": [
+    "compiler/**",
+    ".github/**",
+    "**/ISA/**",
+    "**/*isa*.md"
+  ],
+  "allow_deletions": false,
+  "require_separate_worktree": true,
+  "cross_layer_authorized": false
+}

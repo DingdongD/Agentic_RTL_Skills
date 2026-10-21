@@ -47,3 +47,74 @@ python scripts/rtl_style_check.py --root /path/to/project --filelist rtl/filelis
 ```
 
 These commands are examples until exercised on an actual RTL project. Keep credentials, memory compiler output, PDK/Liberty/LEF and private EDA reports outside the public repository.
+
+## SoC–RTL executable platform (incremental)
+
+The sole `agentic-rtl-skills` entrypoint now also invokes three deterministic
+modules documented in
+[`workflows/soc-rtl-platform.md`](agentic-rtl-skills/workflows/soc-rtl-platform.md):
+
+- `engine.flow_engine`: resumable dependency DAG with content fingerprints,
+  explicit outputs, JSON states, and invalidation.
+- `verification.cycle_scoreboard`: reference-vs-RTL JSONL traces with
+  cycle-exact, transaction-equivalent and domain-local order modes.
+- `backends.synopsys_job`: explicit-approval remote EDA script staging,
+  SSH execution, captured log and exit status.
+
+These are first usable execution primitives, **not** a completed SoC DSE
+platform, automated CModel generator, or signed-off Synopsys flow.
+They require an operator-reviewed plan, project-specific contracts,
+EDA configuration and independent regression evidence.
+
+Run local standard-library tests from the Skill root:
+
+```bash
+python -m unittest discover -s tests -p 'test_*.py' -v
+```
+
+## SoC/Compiler_Codes safe optimization (candidate branch)
+
+A new **non-destructive** external-repository path is available in
+[`workflows/compiler-codes-preservation.md`](agentic-rtl-skills/workflows/compiler-codes-preservation.md).
+It keeps the existing **single Skill entrypoint** and all prior workflows.
+This is the first executable guardrail increment, **not** a complete SoC DSE,
+Synopsys job manager, or cycle-accurate oracle yet.
+
+The optional `engine.repository_guard` checks candidate Git branch and
+worktree isolation, changed-path scope (including untracked files), protected
+paths, prohibited deletions/renames, and cross-layer authorization. It does
+**not** prove that a permitted patch is functionally correct or that tests
+were not weakened; those require independent checks and review.
+
+Example, after creating a separate candidate worktree and inspecting the
+project's actual paths, create a project-specific allowlist by copying
+`configs/compiler_codes.policy.json` (its paths are illustrative only).
+From `agentic-rtl-skills/` run:
+
+```bash
+python -m engine.repository_guard \\
+  --root /path/to/Compiler_Codes_candidate \\
+  --policy /path/to/reviewed-policy.json \\
+  --base <frozen-base-commit-sha> --mode patch
+python -m unittest discover -s tests -p 'test_*.py' -v
+```
+
+A machine-readable starting point for architecture/RTL contracts is provided
+at `contracts/schemas/architecture.schema.json`. Schema validation is not
+functional proof; existing regressions, compiler-to-CModel-to-RTL checks,
+cycle/protocol checks and comparable PPA evidence remain necessary.
+
+## Compiler_Codes integration and complex cycle regression
+
+A real Icarus Verilog ready/valid FIFO random-handshake test now complements
+the generated counter regression. Pinned Compiler_Codes ACTSim portable Python
+tests are configured in GitHub Actions, but that repository is inaccessible to
+the default public runner: add a GitHub Actions secret
+`COMPILER_CODES_READ_TOKEN` with read access to enable the checkout.
+Without the secret, the report records **BLOCKED**, not PASS.
+See `workflows/compiler-codes-live-regression.md`.
+
+`verification.physical_gate` performs comparison of reports with matching
+PVT/library/SDC/physical stages. No authorized DC/PT/PTPX execution or
+place-and-route is claimed by the repository. Full numerical CModel ↔ actual
+RTL and SoC-wide DSE require additional real evidence.

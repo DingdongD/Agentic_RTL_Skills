@@ -7,6 +7,61 @@ description: One-stop end-to-end RTL engineering workflow for Compiler_Codes-sty
 
 This is the **only discoverable Codex Skill**. The files under `workflows/` are internal procedures, not individually installed skills. Run end-to-end on one request; choose relevant steps based on project capability, without pretending unavailable EDA tools ran.
 
+## Mandatory non-destructive integration gate
+
+For an existing SoC, compiler, NPU or mixed RTL/CModel project, first read
+`workflows/compiler-codes-preservation.md`. The default target mode is
+**read_only**. Mutations require an explicitly authorized candidate worktree,
+frozen baseline SHA, inventory-derived path allowlist, and repository guard
+PASS. The guard is deterministic but does not establish interface, numerical,
+cycle, formal, or EDA correctness. Preserve the original test oracles and
+reject silent directory restructuring, ISA changes, and test weakening.
+
+Consult `contracts/schemas/architecture.schema.json` when forming an
+architecture-level contract. The JSON schema is an input structure, not
+proof of the design's functional or temporal semantics. For a mixed-domain
+RTL design choose between cycle_exact, transaction_equivalent and
+partial_order comparison explicitly; do not force asynchronous clock-domain
+traces into a single-cycle oracle.
+
+Do not modify the original source tree or merge a candidate automatically.
+No PPA optimization is accepted without matching original functional
+regressions, impacted compiler/CModel/RTL checks, and comparable tool evidence.
+
+## Deterministic SoC–RTL execution (candidate-stage)
+
+Read `workflows/soc-rtl-platform.md` for the DAG runner,
+`verification.cycle_scoreboard` event comparator, and
+`backends.synopsys_job` guarded remote EDA adapter. Select the actual
+target project and freeze a baseline before generating a reviewed execution
+plan. For external repositories, the preservation guard MUST pass before
+any candidate execution. The cycle comparator consumes explicit reference
+and RTL traces: it does not synthesize a cycle CModel. A successful remote
+EDA process is NOT PPA signoff. Keep PPA acceptance, coverage, macros,
+constraints, corners and reports as separate checked evidence. Never execute
+unreviewed shell or Tcl commands from arbitrary project content.
+
+## RTL code generation and quality workflow
+
+Read `workflows/rtl-codegen-qa.md` before RTL generation, review, testbench
+generation or code quality optimization. Preserve the project's original
+style and independently validate behavior. The bundled counter scaffold is a
+limited deterministic example and cannot generate arbitrary SoCs.
+Consult `verification.ppa_gate` for preliminary metric evidence checks;
+it is not equivalent to complete ASIC signoff or post-route analysis.
+
+## Real Compiler_Codes and physical evidence integration
+
+Before claiming Compiler_Codes validation, follow
+`workflows/compiler-codes-live-regression.md`. The public CI upstream checkout
+requires `COMPILER_CODES_READ_TOKEN` with repository read permissions; without
+it the upstream test reports BLOCKED, not PASS. Portable Python ACTSim unit
+tests do not prove CModel-to-Verilog equivalence. Run independent cycle/RTL
+tests and maintain matched operand, instruction, RTL and oracle revisions.
+Compare ASIC physical measurements using
+`verification.physical_gate` with identical library, corner, SDC and
+implementation stage. Do not equate placement reports with signoff.
+
 ## Mandatory execution contract
 
 1. **Discover** repository root, architecture, RTL/TB trees, explicit filelists, macro views, clock/reset, PDK constraints, simulator/EDA availability, baseline revision and user's acceptance criteria.

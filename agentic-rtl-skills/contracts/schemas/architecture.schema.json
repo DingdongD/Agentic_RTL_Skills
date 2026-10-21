@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SoC/RTL architecture contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "design",
+    "interface",
+    "functional",
+    "temporal",
+    "verification"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "design": {
+      "type": "object",
+      "required": [
+        "name",
+        "source_revision"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_revision": {
+          "type": "string",
+          "minLength": 7
+        }
+      },
+      "additionalProperties": true
+    },
+    "interface": {
+      "type": "object",
+      "required": [
+        "clock_domains",
+        "reset_policy",
+        "public_ports"
+      ],
+      "properties": {
+        "clock_domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "reset_policy": {
+          "type": "string"
+        },
+        "public_ports": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "direction",
+              "width"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "direction": {
+                "enum": [
+                  "input",
+                  "output",
+                  "inout"
+                ]
+              },
+              "width": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "functional": {
+      "type": "object",
+      "required": [
+        "oracle",
+        "arithmetic"
+      ],
+      "properties": {
+        "oracle": {
+          "type": "string"
+        },
+        "arithmetic": {
+          "type": "string"
+        }
+      }
+    },
+    "temporal": {
+      "type": "object",
+      "required": [
+        "comparison",
+        "clock_domains"
+      ],
+      "properties": {
+        "comparison": {
+          "enum": [
+            "cycle_exact",
+            "transaction_equivalent",
+            "partial_order"
+          ]
+        },
+        "clock_domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "latency_cycles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "initiation_interval": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "required": [
+        "existing_regressions",
+        "new_tests"
+      ],
+      "properties": {
+        "existing_regressions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "new_tests": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

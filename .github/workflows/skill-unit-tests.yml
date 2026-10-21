@@ -1,0 +1,64 @@
+name: Skill unit tests
+on:
+  push:
+    branches: [feature/soc-rtl-contract-guardrails]
+  pull_request:
+    paths:
+      - 'agentic-rtl-skills/**'
+      - '.github/workflows/skill-unit-tests.yml'
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Icarus Verilog
+        run: sudo apt-get update -qq && sudo apt-get install -y iverilog
+      - name: Validate modules and standard-library unit tests
+        working-directory: agentic-rtl-skills
+        run: |
+          python -m compileall -q engine verification backends adapters generation dse tests
+          python -m unittest discover -s tests -p 'test_*.py' -v
+          PYTHONPATH=. python tests/rtl_simulation_smoke.py
+          PYTHONPATH=. python tests/rtl_fifo_smoke.py
+
+  compiler-codes-portable:
+    runs-on: ubuntu-latest
+    env:
+      COMPILER_CODES_TOKEN: ${{ secrets.COMPILER_CODES_READ_TOKEN }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: skills
+      - name: Record unavailable private integration
+        if: ${{ env.COMPILER_CODES_TOKEN == '' }}
+        run: |
+          printf '{"status":"BLOCKED","reason":"COMPILER_CODES_READ_TOKEN missing; no private checkout performed"}\n' > /tmp/compiler_codes_portable.json
+      - uses: actions/checkout@v4
+        if: ${{ env.COMPILER_CODES_TOKEN != '' }}
+        with:
+          token: ${{ secrets.COMPILER_CODES_READ_TOKEN }}
+          repository: DingdongD/Compiler_Codes
+          ref: 02b8fb32f1ad21486db0b3344d3fbd59ab37768c
+          path: upstream
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run real upstream ACTSim portable resource regression
+        if: ${{ env.COMPILER_CODES_TOKEN != '' }}
+        working-directory: skills/agentic-rtl-skills
+        run: |
+          python -m integrations.compiler_codes --root ../../upstream --out /tmp/compiler_codes_portable.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: compiler-codes-portable-report
+          path: /tmp/compiler_codes_portable.json
+          if-no-files-found: warn

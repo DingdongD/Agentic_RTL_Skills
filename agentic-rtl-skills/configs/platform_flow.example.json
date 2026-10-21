@@ -1,0 +1,41 @@
+{
+  "nodes": [
+    {
+      "id": "lint",
+      "command": [
+        "python3",
+        "-c",
+        "print('replace with actual lint command')"
+      ],
+      "inputs": [
+        "rtl/top.sv"
+      ],
+      "outputs": []
+    },
+    {
+      "id": "cycle_check",
+      "deps": [
+        "lint"
+      ],
+      "command": [
+        "python3",
+        "-m",
+        "verification.cycle_scoreboard",
+        "--reference",
+        "trace/reference.jsonl",
+        "--rtl",
+        "trace/rtl.jsonl",
+        "--out",
+        "reports/cycle.json"
+      ],
+      "inputs": [
+        "rtl/top.sv",
+        "trace/reference.jsonl",
+        "trace/rtl.jsonl"
+      ],
+      "outputs": [
+        "reports/cycle.json"
+      ]
+    }
+  ]
+}
